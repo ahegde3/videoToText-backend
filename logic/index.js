@@ -2,7 +2,7 @@ const fs = require("fs");
 const ffmpeg = require("fluent-ffmpeg");
 const ffmpegPath = require("@ffmpeg-installer/ffmpeg").path;
 const ytdl = require("ytdl-core");
-const { resolve } = require("path");
+const { audioToTextUsingDeepGram } = require("./speech");
 
 ffmpeg.setFfmpegPath(ffmpegPath);
 
@@ -30,7 +30,7 @@ function convert(input, output, callback) {
 
 downloadYoutubeVideo = async (url) => {
   console.log(url);
-  const videoId = url.split("v=")[1];
+  const videoId = url.split("v=")[1]?.split("&")?.[0];
   console.log(videoId);
 
   ytdl(`http://www.youtube.com/watch?v=${videoId}`).pipe(
@@ -51,10 +51,10 @@ const convertToAudio = async (url) => {
   const stream = ytdl.downloadFromInfo(videoInfo, {
     quality: "highestaudio",
   });
-
+  console.log(videoInfo.formats[0]);
   return new Promise((resolve, reject) => {
     ffmpeg(stream)
-      .audioBitrate(videoInfo.formats[0].audioBitrate)
+      .audioBitrate(videoInfo.formats[0].bitrate)
       .withAudioCodec("libmp3lame")
       .toFormat("mp3")
       .saveToFile(`${videoId}.mp3`)
@@ -66,7 +66,11 @@ const convertToAudio = async (url) => {
         console.log(err);
         reject(err);
       });
-  }).catch((err) => console.log(err));
+  })
+    .then(() => {
+      return audioToTextUsingDeepGram(videoId);
+    })
+    .catch((err) => console.log(err));
 };
 
 module.exports = { convertToAudio, downloadYoutubeVideo };

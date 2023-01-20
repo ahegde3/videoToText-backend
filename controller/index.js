@@ -5,26 +5,20 @@ const { convertToAudio, downloadYoutubeVideo } = require("../logic");
 router.post("/convertToAudio", (req, res) => {
   return convertToAudio(req.body.url)
     .then((result) => {
-      //return responseClass.getResponseFormat(res, 200, { ...result });
-      return result;
+      return res.json(result);
     })
     .catch((e) => {
-      // logger("error in searching is" + e);
-      // return responseClass.getResponseFormat(res, 403, { e });
-      return e;
+      return res.json(e);
     });
 });
 
 router.post("/downloadVideo", (req, res) => {
   return downloadYoutubeVideo(req.body.url)
     .then((result) => {
-      //return responseClass.getResponseFormat(res, 200, { ...result });
-      return result;
+      return res.json(result);
     })
     .catch((e) => {
-      // logger("error in searching is" + e);
-      // return responseClass.getResponseFormat(res, 403, { e });
-      return e;
+      return res.json(e);
     });
 });
 
