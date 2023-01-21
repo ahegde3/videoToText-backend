@@ -1,9 +1,9 @@
 const express = require("express");
 const router = express.Router();
-const { convertToAudio, downloadYoutubeVideo } = require("../logic");
+const { convertToText, downloadYoutubeVideo } = require("../logic");
 
-router.post("/convertToAudio", (req, res) => {
-  return convertToAudio(req.body.url)
+router.post("/convertToText", (req, res) => {
+  return convertToText(req.body.url)
     .then((result) => {
       return res.json(result);
     })

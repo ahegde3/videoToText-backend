@@ -54,7 +54,7 @@ const audioToTextUsingDeepGram = async (videoId) => {
   try {
     const deepgram = new Deepgram(process.env.DEEPGRAM_KEY);
 
-    const filename = `./${videoId}.mp3`;
+    const filename = `./audio/${videoId}.mp3`;
     const audioFile = {
       buffer: fs.readFileSync(filename),
       mimetype: "audio/mpeg",
@@ -62,6 +62,7 @@ const audioToTextUsingDeepGram = async (videoId) => {
     console.log("before transcript");
     const response = await deepgram.transcription.preRecorded(audioFile, {
       punctuation: true,
+      utterances: true,
     });
 
     console.log(JSON.stringify(response.results));
