@@ -59,14 +59,22 @@ const audioToTextUsingDeepGram = async (videoId) => {
       buffer: fs.readFileSync(filename),
       mimetype: "audio/mpeg",
     };
-    console.log("before transcript");
+
     const response = await deepgram.transcription.preRecorded(audioFile, {
       punctuation: true,
       utterances: true,
     });
 
-    console.log(JSON.stringify(response.results));
-    return response.results;
+    const transcript = response?.results?.utterances?.map(
+      (utterance) => utterance.transcript
+    );
+
+    fs.writeFileSync(
+      `./transcripts/${videoId}.txt`,
+      transcript.join("\r\n"),
+      () => `Wrote ${videoId}.txt`
+    );
+    return { fileName: `${videoId}.txt` };
   } catch (err) {
     console.log(err);
   }

@@ -5,9 +5,19 @@ const { convertToText, downloadYoutubeVideo } = require("../logic");
 router.post("/convertToText", (req, res) => {
   return convertToText(req.body.url)
     .then((result) => {
-      return res.json(result);
+      const { fileName } = result;
+      const path = __dirname + "/../transcripts/" + fileName;
+
+      return res.download(path, fileName, (err) => {
+        if (err) {
+          res.status(500).send({
+            message: "Could not download the file. " + err,
+          });
+        }
+      });
     })
     .catch((e) => {
+      console.log(e);
       return res.json(e);
     });
 });

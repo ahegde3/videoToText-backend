@@ -19,7 +19,6 @@ downloadYoutubeVideo = async (url) => {
 };
 
 const convertToText = async (url) => {
-  console.log(url);
   const videoId = url.split("v=")[1]?.split("&")?.[0];
   if (!videoId) return;
   console.log(videoId);
