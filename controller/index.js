@@ -1,20 +1,23 @@
 const express = require("express");
 const router = express.Router();
+const fs = require("fs");
 const { convertToText, downloadYoutubeVideo } = require("../logic");
 
 router.post("/convertToText", (req, res) => {
   return convertToText(req.body.url)
     .then((result) => {
       const { fileName } = result;
-      const path = __dirname + "/../transcripts/" + fileName;
 
-      return res.download(path, fileName, (err) => {
-        if (err) {
-          res.status(500).send({
-            message: "Could not download the file. " + err,
-          });
-        }
-      });
+      if(!fileName) throw Error("file not found")
+
+      const path = __dirname + "/../transcripts/" + fileName;
+      fs.readFile(path, (err, data) => {
+        if (err) res.status(500).send(err);
+        res.contentType('application/text')
+           .send(JSON.stringify(`data:application/text;base64,${new Buffer.from(data).toString('base64')}`));
+         fs.unlinkSync(path)  
+    });
+
     })
     .catch((e) => {
       console.log(e);
